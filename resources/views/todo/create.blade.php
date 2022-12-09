@@ -1,10 +1,11 @@
 @extends("layouts.app")
+
 @section("content")
-    <div class="row">
-        <div class="col-12">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
             <div class="card">
                 <div class="card-header">
-                    登録画面
+                    ToDo登録
                 </div>
                 <div class="card-body">
                     <form method="POST" action="/todos">
@@ -17,7 +18,7 @@
                             <label for="content" class="control-label">内容</label>
                             <input class="form-control" name="content" type="text">
                         </div>
-                        <button class="btn btn-primary" type="submit">登録</button>
+                        <button class="btn btn-success" type="submit">登録</button>
                     </form>
                 </div>
             </div>

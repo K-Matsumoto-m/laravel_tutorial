@@ -21,6 +21,7 @@ class CreateTodosTable extends Migration
             $table->bigInteger('user_id');
             $table->timestamps();
             $table->softDeletes();
+            $table->collation = 'utf8mb4_bin';
         });
     }
 

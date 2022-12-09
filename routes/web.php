@@ -31,4 +31,5 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('todos/{id}/edit', 'TodoController@edit');
     Route::put('todos/{id}', 'TodoController@update');
     Route::delete('todos/{id}', 'TodoController@destroy');
+    Route::post('todos/complete/{id}', 'TodoController@complete');
 });

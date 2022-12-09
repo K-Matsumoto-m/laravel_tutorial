@@ -13,13 +13,35 @@ class TodoController extends Controller
      * 
      * 一覧画面
      *
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        // 一旦全件取得する（後程、ログインユーザーのToDoに限定する予定）
-        $todos = Todo::all();
-        return view('todo.index', compact('todos'));
+        $user_id = Auth::id();
+
+        $query = Todo::where('user_id', '=', $user_id);
+
+        // 検索語句
+        $search = $request->input('search');
+
+        if ($search) {
+            // 全角スペースを半角に変換
+            $space_conversion = mb_convert_kana($search, 's');
+
+            // 検索語句を半角スペースで区切り、配列にする
+            $search_word_array = preg_split('/[\s,]+/', $space_conversion, -1, PREG_SPLIT_NO_EMPTY);
+
+            foreach($search_word_array as $word) {
+                $query->where('content', 'like', '%'.$word.'%');
+            }
+        }
+
+        $todos = $query->orderBy('status', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('todo.index', compact('todos', 'search'));
     }
 
     /**
@@ -52,7 +74,7 @@ class TodoController extends Controller
 
         return redirect('todos')->with(
             'status',
-            $todo->title . 'を登録しました!'
+            '「' . $todo->title . '」を登録しました!'
         );
     }
 
@@ -96,13 +118,13 @@ class TodoController extends Controller
     public function update(Request $request, $id)
     {
         $todo = Todo::find($id);
-
         $todo->title = $request->input('title');
+        $todo->content = $request->input('content');
         $todo->save();
 
         return redirect('todos')->with(
             'status',
-            $todo->title . 'を更新しました!'
+            '「' . $todo->title . '」を更新しました!'
         );
     }
 
@@ -121,7 +143,27 @@ class TodoController extends Controller
 
         return redirect('todos')->with(
             'status',
-            $todo->title . 'を削除しました!'
+            '「' . $todo->title . '」を削除しました!'
+        );
+    }
+
+    /**
+     * 完了機能
+     * 
+     * ToDoの状態を完了にする
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function complete($id)
+    {
+        $todo = Todo::find($id);
+        $todo->status = 1;
+        $todo->save();
+
+        return redirect('todos')->with(
+            'status',
+            '「' . $todo->title . '」を完了しました!'
         );
     }
 }
