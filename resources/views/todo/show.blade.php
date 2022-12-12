@@ -26,7 +26,7 @@
                                         未了
                                     <!-- 完了の場合 -->
                                     @elseif($todo->status === 1)
-                                        済
+                                        完了
                                     @endif
                                 </td>
                             </tr>

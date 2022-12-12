@@ -11022,9 +11022,6 @@ return jQuery;
       return false;
     }
   });
-  $(window).load(function () {
-    console.log('テスト');
-  });
 });
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 

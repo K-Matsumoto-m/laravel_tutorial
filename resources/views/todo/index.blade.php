@@ -53,7 +53,7 @@
                                             </form>
                                         <!-- 完了の場合、「済」と表示 -->
                                         @elseif($todo->status === 1)
-                                            済
+                                            完了
                                         @endif
                                     </td>
                                     <td>{{ $todo->title }}</td>
