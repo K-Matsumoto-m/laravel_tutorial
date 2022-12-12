@@ -88,8 +88,18 @@ class TodoController extends Controller
      */
     public function show($id)
     {
-        $todo = Todo::find($id);
-        return view('todo.show', compact('todo'));
+        $todo = Todo::withTrashed()->find($id);
+
+        $message = $this->decideAccess($todo);
+
+        if ($message === true) {
+            return view('todo.show', compact('todo'));
+        } else {
+            return redirect('todos')->with([
+                'status' => $message,
+                'alert' => 'danger'
+            ]);
+        }
     }
 
     /**
@@ -102,8 +112,18 @@ class TodoController extends Controller
      */
     public function edit($id)
     {
-        $todo = Todo::find($id);
-        return view('todo.edit', compact('todo'));
+        $todo = Todo::withTrashed()->find($id);
+
+        $message = $this->decideAccess($todo);
+
+        if ($message === true) {
+            return view('todo.edit', compact('todo'));
+        } else {
+            return redirect('todos')->with([
+                'status' => $message,
+                'alert' => 'danger'
+            ]);
+        }
     }
 
     /**
@@ -165,5 +185,50 @@ class TodoController extends Controller
             'status',
             '「' . $todo->title . '」を完了しました!'
         );
+    }
+
+    /**
+     * 投稿者によるアクセスか判定する
+     * 
+     * 投稿者によるアクセスの場合、trueを返す
+     * 投稿者以外によるアクセスの場合、falseを返す
+     *
+     * @param Todo|Model $todo
+     * @return bool
+     */
+    public function confirmUser($todo)
+    {
+        $user_id = Auth::id();
+        if ($todo->user_id == $user_id) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 不適切なアクセスの場合、エラーメッセージを返す
+     * 正常な場合、trueを返す
+     * 
+     * 以下の場合は不適切と判定する
+     * ・投稿者とアクセスユーザーが異なる場合
+     * ・削除済みの投稿へのアクセスの場合
+     *
+     * @param Todo|Model $todo
+     * @return mixed
+     */
+    public function decideAccess($todo)
+    {
+        // ToDoのuser_idとアクセスユーザーのidが異なる場合
+        if (!$this->confirmUser($todo)) {
+            return '不正なアクセスです。';
+        }
+
+        // 削除済みのToDoへのアクセスの場合
+        if ($todo->deleted_at != null) {
+            return '指定されたToDoは削除されています。';
+        }
+
+        return true;
     }
 }

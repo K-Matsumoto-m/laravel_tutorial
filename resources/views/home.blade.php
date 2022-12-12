@@ -14,8 +14,9 @@
                             </div>
                         @endif
 
-                        ログインしました!
-                        <hr>
+                        <div class="alert alert-info" role="alert">
+                            ログイン中
+                        </div>
 
                         <!-- 未了のToDoがあるとき -->
                         @if ($todo)

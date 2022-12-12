@@ -9,9 +9,15 @@
                 </div>
                 <div class="card-body">
                     @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
+                        @if (session('alert'))
+                            <div class="alert alert-{{ session('alert') }}" role="alert">
+                                {{ session('status') }}
+                            </div>
+                        @else
+                            <div class="alert alert-success" role="alert">
+                                {{ session('status') }}
+                            </div>
+                        @endif
                     @endif
                     <a href="{{ url('todos/create') }}" class="btn btn-primary mb-3">登録</a>
 
@@ -22,7 +28,6 @@
                                 <span>内容検索</span>
                             </div>
                             <div class="col-auto">
-                                <!-- label for="search" class="ssr-only">内容検索</label -->
                                 <input class="form-control mb-2" type="text" name="search"
                                     value="{{ $search }}" placeholder="検索語句を入力">
                             </div>
@@ -45,13 +50,13 @@
                             @forelse($todos as $todo)
                                 <tr>
                                     <td class="text-center">
-                                        <!-- 未了の場合、完了ボタンを表示 -->
+                                        <!-- 未了の場合、「完了にする」ボタンを表示 -->
                                         @if($todo->status === 0)
                                             <form method="POST" action="/todos/complete/{{ $todo->id }}">
                                                 @csrf
                                                 <button class="btn btn-success" type="submit">完了にする</button>
                                             </form>
-                                        <!-- 完了の場合、「済」と表示 -->
+                                        <!-- 完了の場合、「完了」と表示 -->
                                         @elseif($todo->status === 1)
                                             完了
                                         @endif
@@ -80,6 +85,4 @@
             </div>
         </div>
     </div>
-
-    <script src="{{ mix('js/todo.js') }}"></script>
 @endsection

@@ -19,6 +19,8 @@
 
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+        <script src="{{ mix('js/todo.js') }}"></script>
     </head>
     <body>
         <div id="app">
